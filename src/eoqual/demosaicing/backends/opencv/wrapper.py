@@ -11,8 +11,9 @@ Voir https://docs.opencv.org/4.11.0/de/d25/imgproc_color_conversions.html
 """
 from __future__ import annotations
 
+import warnings
+
 import numpy as np
-from loguru import logger
 
 __all__ = ["opencv_demosaic"]
 
@@ -45,14 +46,20 @@ def opencv_demosaic(
 
     if method == 'vng':
         if image.dtype not in [np.uint8]:
-            logger.warning(f"Only CV_8U. Your type is: {image.dtype}")
-            logger.warning("The image has been converted to uint8 dor demosaicing")
+            warnings.warn(
+                f"opencv_demosaic(method='vng') requires CV_8U ; got {image.dtype}, "
+                "converting to uint8 for demosaicing.",
+                stacklevel=2,
+            )
             image_data_max = np.max(image)
             bayer_image_uint8 = np.uint8(image.astype(np.float32) / image_data_max * 255 + 0.5)
     else:
         if image.dtype not in [np.uint8, np.uint16]:
-            logger.warning(f"Only CV_8U or CV_16U. Your type is: {image.dtype}")
-            logger.warning("The image has been converted to uint16 dor demosaicing")
+            warnings.warn(
+                f"opencv_demosaic requires CV_8U or CV_16U ; got {image.dtype}, "
+                "converting to uint16 for demosaicing.",
+                stacklevel=2,
+            )
             bayer_image_uint16 = np.uint16(image * 65535 + 0.5)
 
     if pattern == 'RGGB':
