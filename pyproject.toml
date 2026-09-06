@@ -1,0 +1,53 @@
+# Documentation de poetry: https://python-poetry.org/docs/pyproject/
+
+[tool.poetry]
+name = "eoqual-demosaicing"
+version = "0.1.0"
+description = "Collection of Bayer-pattern image demosaicing methods"
+authors = ["Olivier Amram <olivier.amram@free.fr>"]
+maintainers = [
+    "Olivier Amram <olivier.amram@free.fr>"
+]
+repository = "https://github.com/EOQual/eoqual-demosaicing.git"
+readme = "README.md"
+license = "MIT"
+keywords = ["demosaicing", "bayer", "image", "earth-observation"]
+packages = [{include = "eoqual/demosaicing", from = "src"}]
+include = [
+    "src/eoqual/demosaicing/backends/ha/LICENSE",
+    "src/eoqual/demosaicing/backends/ari/LICENSE",
+    "src/eoqual/demosaicing/backends/ari/NOTICE.md",
+    "src/eoqual/demosaicing/backends/ri/LICENSE",
+    "src/eoqual/demosaicing/backends/ri/NOTICE.md",
+    "src/eoqual/demosaicing/backends/dlmmse/LICENSE",
+    "src/eoqual/demosaicing/backends/dlmmse/NOTICE.md",
+]
+exclude = [
+    "**/__pycache__",
+    "**/.DS_Store",
+]
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+numpy = "*"
+scipy = "*"
+opencv-python = "*"
+colour-demosaicing = "*"
+rich = "*"
+
+[tool.poetry.group.docs.dependencies]
+sphinx = "*"
+sphinx-rtd-theme = "*"
+sphinx-autoapi = "*"
+
+[tool.poetry.group.dev.dependencies]
+poetry = "^2.1.1"
+ipython = "^8.8.0"
+black = "^23.3.0"
+coverage = "^6.5.0"
+pylint = "*"
+pytest = "<9"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
