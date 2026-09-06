@@ -40,12 +40,12 @@ entrée.
 | `interp_bilinear`, `interp_bicubic`, `interp_spline` | `backends/interpolation/generic.py` | Implémentation originale (auteur de ce dépôt) | MIT |
 | `opencv_bilinear`, `opencv_vng`, `opencv_ea` | `backends/opencv/wrapper.py` | Enrobage de `cv2.cvtColor` (OpenCV) | MIT (wrapper) — OpenCV **Apache-2.0** |
 | `colour_bilinear`, `colour_malvar2004`, `colour_menon2007` | `backends/colour_science/wrapper.py` | Enrobage de https://github.com/colour-science/colour-demosaicing | MIT (wrapper) — vérifié (`LICENSE` du dépôt) **BSD-3-Clause** |
-| `bilinear` | `backends/bilinear/amram.py` | Implémentation originale (auteur de ce dépôt) | MIT |
-| `green_edge_based` | `backends/green_edge_based/amram.py` | Implémentation originale (auteur de ce dépôt) | MIT |
-| `malvar_bilateral` | `backends/malvar_bilateral/amram.py` | Implémentation originale (auteur de ce dépôt) | MIT |
+| `bilinear` | `backends/bilinear/channelwise.py` | Implémentation originale (auteur de ce dépôt) | MIT |
+| `green_edge_based` | `backends/green_edge_based/directional.py` | Implémentation originale (auteur de ce dépôt) | MIT |
+| `malvar_bilateral` | `backends/malvar_bilateral/bilateral.py` | Implémentation originale (auteur de ce dépôt) | MIT |
 | `edge_aware`, `edge_aware_simplified` | `backends/edge_aware/` | Implémentation originale (auteur de ce dépôt) | MIT |
-| `ahd` | `backends/ahd/amram.py` | Implémentation originale, inspirée du principe de Hirakawa & Parks (2005) — aucun code tiers repris | MIT |
-| `mrf` | `backends/mrf/amram.py` | Implémentation originale, inspirée des approches par champ de Markov — aucun code tiers repris | MIT |
+| `ahd` | `backends/ahd/homogeneity.py` | Implémentation originale, inspirée du principe de Hirakawa & Parks (2005) — aucun code tiers repris | MIT |
+| `mrf` | `backends/mrf/diffusion.py` | Implémentation originale, inspirée des approches par champ de Markov — aucun code tiers repris | MIT |
 | `malvar` | `backends/malvar/he_cutler.py` | Adapté de https://github.com/brandondube/prysm (`prysm/bayer.py`, Brandon Dube) | **MIT** — vérifié (`LICENSE.md` du dépôt) |
 | `ha`, `ari`, `ri`, `gbtf`, `mlri`, `wmlri` | `backends/ha/`, `backends/ari/`, `backends/ri/` | Adapté du code de référence IPOL (Jin, Guo, Facciolo, Morel, 2021), lui-même basé sur les gists de Facciolo/Guo/Jin pour `ha` — voir `NOTICE.md` dans chaque dossier | **BSD 2-Clause modifiée** — vérifié (`LICENSE.txt` du paquet source `residual_demosaicking`, Copyright (c) 2021 Qiyu Jin, Yu Guo, Gabriele Facciolo) |
 | `dlmmse` | `backends/dlmmse/zhang_wu.py` | Réimplémentation NumPy des équations, depuis la description algorithmique du code de référence IPOL (Pascal Getreuer) — voir `NOTICE.md` | **BSD simplifiée** — vérifié (`LICENSE` du paquet source `dmzhangwu`, Copyright (c) 2010-2011 Pascal Getreuer) |

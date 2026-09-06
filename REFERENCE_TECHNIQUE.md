@@ -60,7 +60,7 @@ naturelles peu bruitées.
 
 ### 4.1 `bilinear`
 
-**Fichier** : `backends/bilinear/amram.py`
+**Fichier** : `backends/bilinear/channelwise.py`
 
 Interpolation bilinéaire canal par canal : noyau 5 points pour le vert,
 9 points pour rouge/bleu, normalisés par le nombre d'échantillons
@@ -68,7 +68,7 @@ réellement sommés au bord de l'image.
 
 ### 4.2 `green_edge_based`
 
-**Fichier** : `backends/green_edge_based/amram.py`
+**Fichier** : `backends/green_edge_based/directional.py`
 
 Le vert (canal le mieux échantillonné) est interpolé en choisissant,
 pixel à pixel, entre un noyau horizontal/vertical/isotrope selon la
@@ -77,7 +77,7 @@ bleu sont interpolés sur leur différence au vert.
 
 ### 4.3 `malvar_bilateral`
 
-**Fichier** : `backends/malvar_bilateral/amram.py`
+**Fichier** : `backends/malvar_bilateral/bilateral.py`
 
 Vert estimé par le noyau de Malvar-He-Cutler (identique à `malvar`),
 puis rouge/bleu interpolés par un filtre bilatéral guidé par ce vert
@@ -105,7 +105,7 @@ lent sur de grandes images) ; les deux sont RGGB uniquement.
 
 ### 4.5 `ahd`
 
-**Fichier** : `backends/ahd/amram.py`
+**Fichier** : `backends/ahd/homogeneity.py`
 
 Inspiré du principe général de Hirakawa & Parks (2005) — pas un portage
 de l'algorithme original (qui compare deux directions candidates dans
@@ -118,7 +118,7 @@ uniquement.
 
 ### 4.6 `mrf`
 
-**Fichier** : `backends/mrf/amram.py`
+**Fichier** : `backends/mrf/diffusion.py`
 
 Inspiré des approches par champ de Markov — approxime l'énergie
 (lissage de la chrominance sous contrainte edge-aware) par diffusion
