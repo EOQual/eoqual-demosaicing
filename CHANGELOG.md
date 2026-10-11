@@ -2,6 +2,24 @@
 
 ## Version History
 
+Non publié
+
+:   -   **Correction** : `core/bayer.py::extract_channel` traitait le
+        motif `GBRG` comme `BGGR` (B en haut à gauche, R en bas à droite)
+        au lieu de `G B` / `R G`. Les méthodes d'interpolation génériques
+        (`backends/interpolation/generic.py`) inversaient donc R et B, et
+        décalaient G, sur une mosaïque `GBRG`. Les autres motifs, et les
+        méthodes qui passent par `get_mosaic_masks_GGRB`, n'étaient pas
+        concernés. Test de cohérence des quatre motifs ajouté
+        (`tests/test_bayer.py`).
+    -   **Dépendance à eoqual-core** (épinglée sur `v0.1.0`) : les
+        fonctions de `core/bayer.py` (`extract_channel`,
+        `get_mosaic_masks_GGRB`, `get_mosaic_masks_RGB`,
+        `extract_bayer_separated_planes`, `rgb_to_bayer`) dérivent
+        désormais de la table unique de motifs d'`eoqual.core.bayer`.
+        Signatures, types et sorties inchangés (vérifié sur les quatre
+        motifs et toutes les méthodes du registre).
+
 0.1.0 (2026-09-06)
 
 :   -   Première version publique.

@@ -2,14 +2,21 @@
 # -*- coding: utf-8 -*-
 """
 Fonctions communes de manipulation des motifs de Bayer (masques par
-canal, extraction/combinaison de plans, simulation de mosaïque) —
-implémentation propre du projet, partagée par tous les backends.
+canal, extraction/combinaison de plans, simulation de mosaïque),
+partagées par tous les backends.
+
+Toutes dérivent de la table unique de motifs d'``eoqual.core.bayer``
+(``RGGB``, ``BGGR``, ``GRBG``, ``GBRG``, lus ligne par ligne depuis le
+pixel en haut à gauche) : les quatre motifs sont cohérents d'une
+fonction à l'autre par construction.
 """
 from __future__ import annotations
 
-from typing import List, Literal, Tuple
+from typing import Literal, Tuple
 
 import numpy as np
+
+from eoqual.core.bayer import bayer_masks, bayer_offsets
 
 __all__ = [
     'combine_channels',
@@ -65,43 +72,11 @@ def extract_channel(
     np.ndarray
         Sub-plane.
     """
+    masks = bayer_masks(bayer_image.shape[:2], bayer_pattern)
     sub_plane = np.zeros_like(bayer_image, dtype=np.float32)
-
-    if bayer_pattern == 'RGGB':
-        if channel == 'R':
-            sub_plane[0::2, 0::2] = bayer_image[0::2, 0::2].astype(np.float32)
-        elif channel == 'G':
-            sub_plane[1::2, 0::2] = bayer_image[1::2, 0::2].astype(np.float32)
-            sub_plane[0::2, 1::2] = bayer_image[0::2, 1::2].astype(np.float32)
-        elif channel == 'B':
-            sub_plane[1::2, 1::2] = bayer_image[1::2, 1::2].astype(np.float32)
-    elif bayer_pattern == 'BGGR':
-        if channel == 'B':
-            sub_plane[0::2, 0::2] = bayer_image[0::2, 0::2].astype(np.float32)
-        elif channel == 'G':
-            sub_plane[1::2, 0::2] = bayer_image[1::2, 0::2].astype(np.float32)
-            sub_plane[0::2, 1::2] = bayer_image[0::2, 1::2].astype(np.float32)
-        elif channel == 'R':
-            sub_plane[1::2, 1::2] = bayer_image[1::2, 1::2].astype(np.float32)
-    elif bayer_pattern == 'GRBG':
-        if channel == 'G':
-            sub_plane[0::2, 0::2] = bayer_image[0::2, 0::2].astype(np.float32)
-            sub_plane[1::2, 1::2] = bayer_image[1::2, 1::2].astype(np.float32)
-        elif channel == 'R':
-            sub_plane[0::2, 1::2] = bayer_image[0::2, 1::2].astype(np.float32)
-        elif channel == 'B':
-            sub_plane[1::2, 0::2] = bayer_image[1::2, 0::2].astype(np.float32)
-    elif bayer_pattern == 'GBRG':
-        if channel == 'G':
-            sub_plane[0::2, 1::2] = bayer_image[0::2, 1::2].astype(np.float32)
-            sub_plane[1::2, 0::2] = bayer_image[1::2, 0::2].astype(np.float32)
-        elif channel == 'B':
-            sub_plane[0::2, 0::2] = bayer_image[0::2, 0::2].astype(np.float32)
-        elif channel == 'R':
-            sub_plane[1::2, 1::2] = bayer_image[1::2, 1::2].astype(np.float32)
-    else:
-        raise ValueError(f"Unknown Bayer pattern: {bayer_pattern}")
-
+    if channel in ('R', 'G', 'B'):
+        mask = masks[channel]
+        sub_plane[mask] = bayer_image[mask].astype(np.float32)
     return sub_plane
 
 
@@ -150,33 +125,15 @@ def get_mosaic_masks_GGRB(
     Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray]
         A tuple containing the masks for Gr, Gb, R, and B channels, respectively.
     """
-    size_rawq = shape
-    maskGr: np.ndarray = np.zeros((size_rawq[0], size_rawq[1]))
-    maskGb: np.ndarray = np.zeros((size_rawq[0], size_rawq[1]))
-    maskR: np.ndarray  = np.zeros((size_rawq[0], size_rawq[1]))
-    maskB: np.ndarray  = np.zeros((size_rawq[0], size_rawq[1]))
-
-    if pattern == 'GRBG':
-        maskGr[0::2, 0::2] = 1
-        maskGb[1::2, 1::2] = 1
-        maskR[0::2, 1::2]  = 1
-        maskB[1::2, 0::2]  = 1
-    elif pattern == 'RGGB':
-        maskGr[0::2, 1::2] = 1
-        maskGb[1::2, 0::2] = 1
-        maskB[1::2, 1::2]  = 1
-        maskR[0::2, 0::2]  = 1
-    elif pattern == 'GBRG':
-        maskGb[0::2, 0::2] = 1
-        maskGr[1::2, 1::2] = 1
-        maskR[1::2, 0::2]  = 1
-        maskB[0::2, 1::2]  = 1
-    elif pattern == 'BGGR':
-        maskGb[0::2, 1::2] = 1
-        maskGr[1::2, 0::2] = 1
-        maskB[0::2, 0::2]  = 1
-        maskR[1::2, 1::2]  = 1
-
+    masks = bayer_masks(shape, pattern)
+    r_row = bayer_offsets(pattern)['R'][0]
+    g1_row = bayer_offsets(pattern)['G1'][0]
+    # Gr : vert sur la ligne du rouge ; Gb : vert sur la ligne du bleu.
+    green_on_red, green_on_blue = ('G1', 'G2') if g1_row == r_row else ('G2', 'G1')
+    maskGr = masks[green_on_red].astype(np.float64)
+    maskGb = masks[green_on_blue].astype(np.float64)
+    maskR = masks['R'].astype(np.float64)
+    maskB = masks['B'].astype(np.float64)
     return (maskGr, maskGb, maskR, maskB)
 
 
@@ -199,24 +156,10 @@ def get_mosaic_masks_RGB(
     Tuple[np.ndarray, np.ndarray, np.ndarray]
         A tuple containing the red, green, and blue channel masks as NumPy arrays.
     """
-    s = shape
-    i1, i2, i3, i4 = (0, 0, 1, 1)
-    if pattern == 'BGGR':
-        i1, i2, i3, i4 = (1, 1, 0, 0)
-    elif pattern == 'GBRG':
-        i1, i2, i3, i4 = (1, 0, 0, 1)
-    elif pattern == 'GRBG':
-        i1, i2, i3, i4 = (0, 1, 1, 0)
-    elif pattern == 'RGGB':
-        i1, i2, i3, i4 = (0, 0, 1, 1)
-    v1  = np.array([int(x % 2 == i1) for x in range(s[0])]).reshape(-1, 1)
-    v1t = np.array([int(x % 2 == i2) for x in range(s[1])]).reshape(1, -1)
-    v2  = np.array([int(x % 2 == i3) for x in range(s[0])]).reshape(-1, 1)
-    v2t = np.array([int(x % 2 == i4) for x in range(s[1])]).reshape(1, -1)
-    red_mask   = v1 * v1t
-    blue_mask  = v2 * v2t
-    green_mask = (np.ones(s) - red_mask - blue_mask).astype(np.uint8)
-    
+    masks = bayer_masks(shape, pattern)
+    red_mask = masks['R'].astype(np.int64)
+    blue_mask = masks['B'].astype(np.int64)
+    green_mask = masks['G'].astype(np.uint8)
     return red_mask, green_mask, blue_mask
 
 
@@ -244,30 +187,9 @@ def extract_bayer_separated_planes(
     Tuple[np.ndarray, np.ndarray]
         A tuple containing the bayer plane image and the mask used to generate it.
     """
-    # Initialize the mask and mosaic image 
-    size_rgb: Tuple[int, int, int] = bayer.shape
-    mask: np.ndarray = np.zeros((size_rgb[0], size_rgb[1], 3))
-
-    # Create a mapping for the Bayer pattern
-    # 'R' -> 0, 'G' -> 1, 'B' -> 2
-    num: np.ndarray = np.zeros(len(pattern))
-    pattern_list: List[str] = list(pattern.lower())
-    p: int = pattern_list.index('r')
-    num[p] = 0
-    p: List[int] = [idx for idx, i in enumerate(pattern_list) if i == 'g'] # type: ignore
-    num[p] = 1
-    p: int = pattern_list.index('b')
-    num[p] = 2
-
-    # Generate mask
-    mask[0::2, 0::2, int(num[0])] = 1
-    mask[0::2, 1::2, int(num[1])] = 1
-    mask[1::2, 0::2, int(num[2])] = 1
-    mask[1::2, 1::2, int(num[3])] = 1
-
-    # Generate bayer plane
+    masks = bayer_masks(bayer.shape[:2], pattern)
+    mask: np.ndarray = np.stack([masks['R'], masks['G'], masks['B']], axis=-1).astype(np.float64)
     bayer_plane: np.ndarray = bayer[..., None] * mask
-
     return bayer_plane, mask
 
 
@@ -290,23 +212,8 @@ def rgb_to_bayer(
     bayer : ndarray
         Single-channel Bayer image (H, W)
     """
-    H, W, _ = rgb.shape
-    bayer = np.zeros((H, W), dtype=rgb.dtype)
-    
-    # Map letters to RGB channel indices
-    channel_map = {'r': 0, 'g': 1, 'b': 2}
-    
-    # Parse pattern into channel indices
-    pattern_lower = pattern.lower()
-    if len(pattern_lower) != 4 or any(c not in 'rgb' for c in pattern_lower):
-        raise ValueError(f"Invalid Bayer pattern: {pattern}")
-    idx = [channel_map[c] for c in pattern_lower]
-    
-    # Assign channels according to the 2x2 pattern
-    bayer[0::2, 0::2] = rgb[0::2, 0::2, idx[0]]
-    bayer[0::2, 1::2] = rgb[0::2, 1::2, idx[1]]
-    bayer[1::2, 0::2] = rgb[1::2, 0::2, idx[2]]
-    bayer[1::2, 1::2] = rgb[1::2, 1::2, idx[3]]
-    
+    masks = bayer_masks(rgb.shape[:2], pattern)
+    bayer = np.zeros(rgb.shape[:2], dtype=rgb.dtype)
+    for idx, channel in enumerate(('R', 'G', 'B')):
+        bayer[masks[channel]] = rgb[..., idx][masks[channel]]
     return bayer
-

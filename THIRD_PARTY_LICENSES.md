@@ -55,6 +55,11 @@ entrée.
 Dépendances du socle (numpy, scipy, opencv-python, colour-demosaicing,
 rich) : toutes BSD/MIT/Apache-2.0.
 
+### 2.1bis Dépendance interne EOQual
+
+`eoqual-core` (MIT, même auteur) : motifs de Bayer (`eoqual.core.bayer`),
+numpy et scipy seulement.
+
 ### 2.2 Jeux de données de test
 
 `tests/images/lighthouse.tif` / `lighthouse_bayer.tif` : suite Kodak,
