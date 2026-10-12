@@ -35,7 +35,21 @@ eoqual-core = {git = "https://github.com/EOQual/eoqual-core.git", tag = "v0.1.0"
 numpy = "*"
 scipy = "*"
 opencv-python = "*"
-colour-demosaicing = "*"
+# colour-demosaicing / colour-science : versions compatibles NumPy 2 seulement.
+# Elles bornent Python (0.2.6 / 0.4.5-0.4.6 : 3.10-3.13 ; 0.2.7 / 0.4.7 :
+# 3.11-3.14) ; avec une contrainte unique, Poetry retombait, pour couvrir
+# toute la plage du projet, sur une ancienne version sans borne qui utilise
+# np.float_ (supprimé dans NumPy 2). D'où une contrainte par version de
+# Python. Import différé : sous Python >= 3.15, seules les méthodes colour_*
+# sont indisponibles.
+colour-demosaicing = [
+    {version = ">=0.2.6,<0.2.7", python = ">=3.10,<3.11"},
+    {version = ">=0.2.7", python = ">=3.11,<3.15"},
+]
+colour-science = [
+    {version = ">=0.4.5,<0.4.7", python = ">=3.10,<3.11"},
+    {version = ">=0.4.7", python = ">=3.11,<3.15"},
+]
 rich = "*"
 
 [tool.poetry.group.docs.dependencies]

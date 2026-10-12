@@ -4,7 +4,13 @@
 
 Non publié
 
-:   -   Intégration continue des tests (`.github/workflows/tests.yml`).
+:   -   **Compatibilité NumPy 2 des méthodes `colour_*`** : contraintes
+        colour-demosaicing (0.2.6 sous Python 3.10, >= 0.2.7 de 3.11 à
+        3.14) et colour-science (0.4.5-0.4.6 sous 3.10, >= 0.4.7 ensuite).
+        Avec `colour-demosaicing = "*"`, Poetry retombait sur une ancienne
+        version qui utilise `np.float_` (supprimé dans NumPy 2) : échec de
+        `test_method_smoke[colour_bilinear]` en CI.
+    -   Intégration continue des tests (`.github/workflows/tests.yml`).
     -   `license.txt` : titulaire des droits (Olivier Amram) au lieu du
         nom du module.
     -   **Correction** : `core/bayer.py::extract_channel` traitait le
