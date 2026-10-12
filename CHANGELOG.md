@@ -4,7 +4,10 @@
 
 Non publié
 
-:   -   **Correction** : `core/bayer.py::extract_channel` traitait le
+:   -   Intégration continue des tests (`.github/workflows/tests.yml`).
+    -   `license.txt` : titulaire des droits (Olivier Amram) au lieu du
+        nom du module.
+    -   **Correction** : `core/bayer.py::extract_channel` traitait le
         motif `GBRG` comme `BGGR` (B en haut à gauche, R en bas à droite)
         au lieu de `G B` / `R G`. Les méthodes d'interpolation génériques
         (`backends/interpolation/generic.py`) inversaient donc R et B, et
