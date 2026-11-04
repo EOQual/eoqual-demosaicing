@@ -150,3 +150,4 @@ __OLD__
 
 # Artefacts générés par les scripts de examples/ (ex. all_metrics_overview.py)
 outputMetrics.csv
+examples/output/

@@ -97,6 +97,21 @@ entrée et renvoient une image RGB `(H, W, 3)`. Les méthodes marquées
 Détail de chaque méthode (principe, implémentation, limites) :
 **[REFERENCE_TECHNIQUE.md](REFERENCE_TECHNIQUE.md)**.
 
+**Image bruitée : démosaïçage puis débruitage.** Le chapitre 11 de la
+référence technique pose le modèle de bruit du capteur
+(``var = a + b·L``), calcule ce que chaque démosaïqueur fait du bruit
+(gain de variance en luminance κ_Y, mesuré pour les 26 méthodes), en
+déduit le niveau à donner au débruiteur (``σ = √κ_Y + 0.2`` après
+stabilisation de variance), et compare sur une orthophoto les chaînes et
+les démosaïqueurs, qualité et temps de calcul. Résultat principal :
+`gbtf`, aussi rapide que `ha`, gagne 1.1 à 1.6 dB après débruitage
+NL-Bayes (eoqual-denoising) ; `ari` est le meilleur à bruit faible mais
+138 fois plus lent. Scripts : `examples/joint_denoising_study.py`,
+`examples/demosaicing_noise_benchmark.py`. **Sur ses propres données** :
+`examples/real_data_protocol.py` (HA et GBTF, valeurs de σ à balayer,
+critères sans vérité terrain ; mode simulation sans données) et le
+notebook de tracés `examples/demosaicing_noise.ipynb` (§11.11).
+
 **D'autres méthodes ne sont pas encore portées** (roadmap — code de
 référence trouvé mais pas encore intégré, ou simple citation
 bibliographique sans code disponible) : voir

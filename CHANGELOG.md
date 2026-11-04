@@ -2,9 +2,29 @@
 
 ## Version History
 
-Non publié
+0.2.0 (2026-11-04)
 
-:   -   **Compatibilité NumPy 2 des méthodes `colour_*`** : contraintes
+:   -   **Démosaïçage et bruit** (REFERENCE_TECHNIQUE.md chapitre 11) :
+        modèle physique du bruit du capteur (``var = a + b·L``),
+        propagation du bruit par le démosaïçage (κ_Y, κ_U, κ_V mesurés
+        pour les 26 méthodes), règle ``σ = √κ_Y + 0.2`` pour le
+        débruiteur (validée à 0.1 dB près), analyse de Jin, Facciolo &
+        Morel (2020), étude de 16 chaînes et comparaison des
+        démosaïqueurs (qualité et temps de calcul) sur l'Orthophotoplan
+        2024 de Toulouse Métropole. Scripts
+        `examples/joint_denoising_study.py` et
+        `examples/demosaicing_noise_benchmark.py` ; figures dans
+        `docs/figures/joint_denoising/`. Renvois croisés avec
+        eoqual-denoising (§10).
+    -   **Mode opératoire sur données réelles** (§11.11) :
+        `examples/real_data_protocol.py` (HA et GBTF, conversion des
+        unités du modèle de bruit, balayage de C, bruit de chrominance
+        résiduel et détails conservés sans vérité terrain, vignettes ;
+        mode `--simulate`) et notebook Plotly
+        `examples/demosaicing_noise.ipynb` ; tests
+        `tests/test_real_data_protocol.py`.
+    -   Renvois internes du §9 corrigés (§10 au lieu de §11).
+    -   **Compatibilité NumPy 2 des méthodes `colour_*`** : contraintes
         colour-demosaicing (0.2.6 sous Python 3.10, >= 0.2.7 de 3.11 à
         3.14) et colour-science (0.4.5-0.4.6 sous 3.10, >= 0.4.7 ensuite).
         Avec `colour-demosaicing = "*"`, Poetry retombait sur une ancienne

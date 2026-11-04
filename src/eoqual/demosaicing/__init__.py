@@ -21,7 +21,7 @@ pour l'audit des licences du code adapté (``ha``, ``ari``, ``ri`` et
 variantes, ``malvar``).
 """
 
-__version__ = "0.1.0"
+__version__ = "0.2.0"
 __title__ = "eoqual.demosaicing"
 __description__ = "Collection of Bayer-pattern image demosaicing methods"
 __url__ = "https://github.com/EOQual/eoqual-demosaicing"

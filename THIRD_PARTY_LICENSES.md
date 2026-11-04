@@ -67,6 +67,20 @@ mise à disposition par Eastman Kodak Company pour un usage sans
 restriction (aucun texte de licence formel — voir
 `tests/images/NOTICE.md`).
 
+`docs/figures/joint_denoising/*.png` (étude du chapitre 11 de
+`REFERENCE_TECHNIQUE.md`) : vignettes extraites de l'**Orthophotoplan
+2024** de Toulouse Métropole, © Toulouse Métropole, **Licence Ouverte
+v2.0 (Etalab)** — réutilisation libre avec mention de la source
+(https://data.toulouse-metropole.fr/explore/dataset/orthophotoplan-2024/).
+L'image source n'est pas incluse dans le dépôt.
+
+Les études (`examples/joint_denoising_study.py`,
+`examples/demosaicing_noise_benchmark.py`) utilisent en outre, hors
+dépendances du paquet : eoqual-denoising (MIT), eoqual-metrics (MIT),
+scikit-image et tifffile (BSD-3-Clause), matplotlib (licence PSF-like,
+figure `facteur_C_vs_kappa.png`), et pour les chaînes DRUNet deepinv et
+ses poids couleur (BSD-3-Clause) avec PyTorch (BSD-3-Clause).
+
 ## 3. Méthodes non implémentées (roadmap)
 
 Ces méthodes ne sont **pas encore portées** dans `eoqual-demosaicing` —
