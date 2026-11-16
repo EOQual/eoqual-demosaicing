@@ -299,8 +299,9 @@ déduit le σ à donner au débruiteur, puis le vérifie et compare les
 démosaïqueurs (qualité et temps de calcul) sur une orthophoto.
 
 Le débruitage lui-même est traité dans la référence technique
-d'**eoqual-denoising** (§4 : stabilisation de variance ; §10 : débruiter
-une image démosaïquée, cas particulier du bruit coloré). Ce chapitre-ci
+d'**eoqual-denoising** (référence technique : §4 rôle de σ, §5 stabilisation
+de variance, §6 débruiter une image démosaïquée, cas particulier du
+bruit coloré ; `OPTIMISATION.md` §2 : régler σ et le facteur C). Ce chapitre-ci
 en est le pendant côté démosaïçage.
 
 Reproduction (dépendances hors paquet : eoqual-denoising,
@@ -686,7 +687,7 @@ utilisé, et ``(a, b)`` du capteur — plutôt qu'un traitement. Deux options,
 non tranchées :
 
 - **enchaîner** les deux appels en documentant la recette (ce chapitre,
-  et eoqual-denoising §10) : aucune dépendance entre bibliothèques ;
+  et eoqual-denoising §6) : aucune dépendance entre bibliothèques ;
 - **exposer κ_Y** dans le registre d'eoqual-demosaicing (champ de
   `METHODS_CONFIGS`, mesuré une fois pour toutes), et laisser à
   eoqual-denoising la stabilisation et le facteur C (paramètre
