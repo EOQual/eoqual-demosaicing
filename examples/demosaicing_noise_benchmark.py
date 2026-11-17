@@ -5,7 +5,8 @@ Démosaïqueurs face au bruit (REFERENCE_TECHNIQUE.md, §11.6) : temps de
 calcul, transfert du bruit (κ_Y, κ_U, κ_V), qualité sans bruit, et
 qualité après débruitage NL-Bayes pour un bruit de capteur
 
-    var(L) = a + b·L      (L : luminance linéaire normalisée [0, 1])
+    σ²(L) = a·L + b      (L : luminance linéaire normalisée [0, 1] ; a pente, b plancher,
+                          notation d'eoqual-measure)
 
 avec stabilisation de variance (GAT) de paramètres (a, b) appliquée
 **après** le démosaïçage, puis NL-Bayes avec σ = C (domaine stabilisé) ;
@@ -34,8 +35,8 @@ from eoqual.demosaicing.runner import demosaic
 DUPLICATES = {"opencv_bilinear": "bilinear", "colour_bilinear": "bilinear", "colour_malvar2004": "malvar"}
 #: Trop lentes pour l'évaluation avec bruit (≥ 5 s par 512×512) : qualité sans bruit seulement.
 SLOW = {"cdm", "edge_aware", "malvar_bilateral", "edge_aware_simplified"}
-#: Trois niveaux de bruit : (a, b) = ((2/N)², 1/N), N photo-électrons à pleine échelle.
-LEVELS = {100: ((2 / 100) ** 2, 1 / 100), 400: ((2 / 400) ** 2, 1 / 400), 1600: ((2 / 1600) ** 2, 1 / 1600)}
+#: Trois niveaux de bruit : (a, b) = (1/N, (2/N)²), N photo-électrons à pleine échelle.
+LEVELS = {100: (1 / 100, (2 / 100) ** 2), 400: (1 / 400, (2 / 400) ** 2), 1600: (1 / 1600, (2 / 1600) ** 2)}
 FACTORS = (0.5, 0.75, 1.0, 1.25, 1.5, 1.75)
 _T = np.array([[1, 1, 1], [1, -1, 0], [1, 1, -2]], float)
 _T /= np.linalg.norm(_T, axis=1, keepdims=True)
@@ -70,17 +71,17 @@ def timing(method, mosaic, repeat=2):
 
 
 def noisy_mosaic(x, a, b, seed):
-    """y = Poisson(L/b)·b + N(0, a) : var(y) = a + b·L."""
+    """y = Poisson(L/a)·a + N(0, b) : σ²(y) = a·L + b."""
     rng = np.random.default_rng(seed)
     clean = mosaic_rggb(x)
-    return rng.poisson(clean / b) * b + rng.normal(0, np.sqrt(a), clean.shape)
+    return rng.poisson(clean / a) * a + rng.normal(0, np.sqrt(b), clean.shape)
 
 
 def denoise_gat(rgb, a, b, C):
     from eoqual.denoising.backends.nl_bayes.native import nl_bayes_denoise
     from eoqual.denoising.vst import generalized_anscombe, inverse_generalized_anscombe
 
-    gain, rn = 1.0 / b, np.sqrt(a)          # var = a + b·L  ⇔  gain 1/b, bruit de lecture √a
+    gain, rn = 1.0 / a, np.sqrt(b)          # σ² = a·L + b  ⇔  gain 1/a, bruit de lecture √b
     g = generalized_anscombe(rgb, gain, rn)
     d = nl_bayes_denoise(g, sigma=float(C), data_range=(float(g.min()), float(g.max())))
     return inverse_generalized_anscombe(d, gain, rn)

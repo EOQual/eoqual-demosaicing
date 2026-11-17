@@ -99,7 +99,7 @@ Détail de chaque méthode (principe, implémentation, limites) :
 
 **Image bruitée : démosaïçage puis débruitage.** Le chapitre 11 de la
 référence technique pose le modèle de bruit du capteur
-(``var = a + b·L``), calcule ce que chaque démosaïqueur fait du bruit
+(``σ² = a·L + b``, notation d'eoqual-measure), calcule ce que chaque démosaïqueur fait du bruit
 (gain de variance en luminance κ_Y, mesuré pour les 26 méthodes), en
 déduit le niveau à donner au débruiteur (``σ = √κ_Y + 0.2`` après
 stabilisation de variance), et compare sur une orthophoto les chaînes et

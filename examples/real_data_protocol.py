@@ -5,7 +5,7 @@ Mode opératoire « démosaïçage puis débruitage » sur données réelles
 (REFERENCE_TECHNIQUE.md §11.11).
 
 Pour une mosaïque brute et un modèle de bruit du capteur
-``var = a + b·L`` (estimé en dehors), compare Hamilton-Adams (``ha``) et
+``σ² = a·L + b`` (notation d'eoqual-measure : a pente, b plancher ; estimé en dehors), compare Hamilton-Adams (``ha``) et
 GBTF (``gbtf``) suivis de NL-Bayes couleur, pour plusieurs valeurs du
 facteur C (σ = C dans le domaine stabilisé ; règle ``C = √κ_Y + 0.2``) :
 
@@ -25,7 +25,7 @@ s'ajoutent.
 Données réelles (mosaïque 2D en DN, .npy ou .tif ; a et b en DN) :
 
     python examples/real_data_protocol.py --raw mosaique.npy --offset 64 --dn-max 4095 \\
-        --a 2.3 --b 0.41 --pattern RGGB --crop 1000 1000 1024 --out protocole/
+        --a 0.41 --b 2.3 --pattern RGGB --crop 1000 1000 1024 --out protocole/
 
 Simulation (sans données ; 400 e⁻ à pleine échelle, 12 bits) :
 
@@ -71,11 +71,11 @@ def normalize_mosaic(raw: np.ndarray, offset: float, dn_max: float) -> np.ndarra
 
 def noise_model_to_normalized(a_dn: float, b_dn: float, offset: float, dn_max: float) -> tuple[float, float]:
     """
-    (a, b) d'un modèle ``var(DN) = a_DN + b_DN · (DN − offset)`` vers la
-    luminance normalisée : ``a = a_DN / S²``, ``b = b_DN / S``, ``S = DN_max − offset``.
+    (a, b) d'un modèle ``σ²(DN) = a_DN · (DN − offset) + b_DN`` (PTC d'eoqual-measure)
+    vers la luminance normalisée : ``a = a_DN / S``, ``b = b_DN / S²``, ``S = DN_max − offset``.
     """
     s = dn_max - offset
-    return a_dn / s**2, b_dn / s
+    return a_dn / s, b_dn / s**2
 
 
 # --------------------------------------------------------------------------- chaîne
@@ -84,7 +84,7 @@ def run_chain(L: np.ndarray, a: float, b: float, method: str, factors, pattern: 
     from eoqual.denoising.backends.nl_bayes.native import nl_bayes_denoise
     from eoqual.denoising.vst import generalized_anscombe, inverse_generalized_anscombe
 
-    gain, read_noise = 1.0 / b, float(np.sqrt(a))
+    gain, read_noise = 1.0 / a, float(np.sqrt(b))
     rgb = demosaic(L, method, pattern=pattern).astype(np.float64)
     g = generalized_anscombe(rgb, gain, read_noise)
     lo, hi = float(g.min()), float(g.max())
@@ -231,7 +231,7 @@ def simulate_raw(image_path: str, electrons: float = 400.0, read_noise_e: float 
     gain = electrons / s                                    # e⁻/DN
     e = rng.poisson(mosaic_rggb(truth) * electrons) + rng.normal(0, read_noise_e, (n, n))
     raw = e / gain + offset
-    a_dn, b_dn = (read_noise_e / gain) ** 2, 1.0 / gain     # var(DN) = a_DN + b_DN·(DN − offset)
+    a_dn, b_dn = 1.0 / gain, (read_noise_e / gain) ** 2     # σ²(DN) = a_DN·(DN − offset) + b_DN
     return raw, truth, a_dn, b_dn
 
 
@@ -279,8 +279,8 @@ def main() -> None:
     src.add_argument("--simulate", metavar="IMAGE", help="image supposée sans bruit (simulation)")
     p.add_argument("--offset", type=float, default=0.0)
     p.add_argument("--dn-max", type=float, default=4095.0)
-    p.add_argument("--a", type=float, help="plancher du modèle var = a + b·(DN − offset), en DN²")
-    p.add_argument("--b", type=float, help="pente du modèle, en DN")
+    p.add_argument("--a", type=float, help="pente du modèle σ² = a·(DN − offset) + b, en DN (PTC d'eoqual-measure : 1/K)")
+    p.add_argument("--b", type=float, help="plancher du modèle, en DN² (bruit de lecture²)")
     p.add_argument("--pattern", default="RGGB")
     p.add_argument("--crop", type=int, nargs=3, metavar=("LIGNE", "COLONNE", "TAILLE"))
     p.add_argument("--electrons", type=float, default=400.0, help="simulation : e⁻ à pleine échelle")
@@ -313,7 +313,7 @@ def main() -> None:
         a_dn, b_dn, offset = args.a, args.b, args.offset
     L = normalize_mosaic(raw, offset, args.dn_max)
     a, b = noise_model_to_normalized(a_dn, b_dn, offset, args.dn_max)
-    print(f"Modèle normalisé : a = {a:.3e}, b = {b:.3e}  (σ à mi-échelle = {np.sqrt(a + b * 0.5):.4f})")
+    print(f"Modèle normalisé : a = {a:.3e}, b = {b:.3e}  (σ à mi-échelle = {np.sqrt(a * 0.5 + b):.4f})")
     rois = None
     if args.roi_flat or args.roi_texture:
         if not (args.roi_flat and args.roi_texture):

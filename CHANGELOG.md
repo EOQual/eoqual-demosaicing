@@ -2,6 +2,12 @@
 
 ## Version History
 
+0.2.1 (2026-11-17)
+
+:   -   **Notation du modèle de bruit alignée sur eoqual-measure** : **σ² = a·L + b**, `a` pente (1/gain), `b` plancher (bruit de lecture²) ; les `a` et `b` de la PTC d'eoqual-measure s'emploient tels quels. Les versions précédentes notaient `var = a + b·L`, lettres inversées.
+        Chapitre 11, `README.md`, exemples et notebook. ⚠️ **`examples/real_data_protocol.py`** : `--a` est désormais la pente (DN) et `--b` le plancher (DN²), comme `measure_ptc` ; `noise_model_to_normalized(a_dn, b_dn, …)` suit la même convention.
+    -   Renvois vers eoqual-denoising mis à jour (§4 à §6, `OPTIMISATION.md`).
+
 0.2.0 (2026-11-04)
 
 :   -   **Démosaïçage et bruit** (REFERENCE_TECHNIQUE.md chapitre 11) :

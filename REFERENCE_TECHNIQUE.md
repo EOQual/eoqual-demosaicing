@@ -354,36 +354,38 @@ vérifie :
 ```
 E[L] = λ / N_sat            avec N_sat = K · S_max  (électrons à pleine échelle)
 var(L) = λ / N_sat² + σ_r² / N_sat²
-       = a + b · L,          a = (σ_r / N_sat)²,   b = 1 / N_sat
+       = a · L + b,          a = 1 / N_sat,   b = (σ_r / N_sat)²
 ```
 
-- ``a`` est le **plancher** (bruit de lecture et d'obscurité, présent
-  même dans le noir) ;
-- ``b`` est la **pente** (bruit photonique, l'inverse du nombre
+- ``a`` est la **pente** (bruit photonique, l'inverse du nombre
   d'électrons à pleine échelle) ;
+- ``b`` est le **plancher** (bruit de lecture et d'obscurité, présent
+  même dans le noir) ;
 - le bruit est **indépendant d'un photosite à l'autre** (pas de
   diaphonie) : spatialement blanc, mais **non stationnaire**, puisque
-  son écart-type ``σ(L) = √(a + b·L)`` dépend de la luminance de chaque
+  son écart-type ``σ(L) = √(a·L + b)`` dépend de la luminance de chaque
   pixel.
 
-C'est la droite de la courbe photon-transfert (PTC) : ``a`` et ``b`` se
-mesurent par la PTC d'eoqual-measure, ou s'estiment sur l'image (le
-modèle « var = a + b·L estimé en dehors » d'une chaîne existante est
-exactement celui-ci).
+C'est la droite de la courbe photon-transfert (PTC), avec les lettres
+d'eoqual-measure (``σ² = a·μ + b``, ``a`` pente, ``b`` plancher) : ``a``
+et ``b`` se mesurent par sa PTC et s'utilisent tels quels, ou s'estiment
+sur l'image. Convention commune aux modules EOQual depuis 2026-11-17 ;
+les versions antérieures de ce module notaient ``var = a + b·L``, lettres
+inversées.
 
 **Théorie « en σ ».** Tout ce qui suit raisonne avec un écart-type, mais
-un écart-type **fonction de la luminance**, ``σ(L) = √(a + b·L)``, et non
+un écart-type **fonction de la luminance**, ``σ(L) = √(a·L + b)``, et non
 un σ unique. Deux façons de le donner à un débruiteur conçu pour un σ
 unique :
 
 - **stabilisation de variance** (transformée d'Anscombe généralisée,
-  GAT) : ``f(L) = (2/b) · √(b·L + 3b²/8 + a)``. Par la méthode delta,
-  ``var(f(L)) ≈ f'(L)² · var(L) = (a + b·L) / (a + b·L + 3b²/8) ≈ 1`` :
+  GAT) : ``f(L) = (2/a) · √(a·L + 3a²/8 + b)``. Par la méthode delta,
+  ``var(f(L)) ≈ f'(L)² · var(L) = (a·L + b) / (a·L + b + 3a²/8) ≈ 1`` :
   le bruit devient d'écart-type **1, partout**. On débruite avec σ = 1
   (ou C, voir §11.4), puis on applique l'inverse exacte non biaisée
   (Mäkitalo & Foi 2013). Dans eoqual-denoising :
-  ``generalized_anscombe(L, gain=1/b, read_noise_dn=√a)`` ;
-- **σ global équivalent** : ``σ₀ = √(a + b·L̄)`` (valeur quadratique
+  ``generalized_anscombe(L, gain=1/a, read_noise_dn=√b)`` ;
+- **σ global équivalent** : ``σ₀ = √(a·L̄ + b)`` (valeur quadratique
   moyenne sur l'image). Plus simple, mais trop fort dans les zones
   sombres et trop faible dans les zones claires.
 
@@ -420,7 +422,7 @@ Trois conséquences :
 
 On note ``κ_Y, κ_U, κ_V`` le rapport des variances après / avant
 démosaïçage. Le modèle de bruit devient, en zone homogène,
-``var_Y(L) ≈ κ_Y · (a + b·L)`` : la forme affine est conservée, avec un
+``var_Y(L) ≈ κ_Y · (a·L + b)`` : la forme affine est conservée, avec un
 coefficient propre à chaque démosaïqueur. Mesure (`demosaicing_noise_benchmark.py`) :
 bruit blanc σ = 20/255 sur une mosaïque uniforme (L = 0.5), corrélation
 avec le voisin horizontal :
@@ -477,7 +479,7 @@ bruit de **Y**. Après démosaïçage, celui-ci vaut ``√κ_Y · σ(L)`` :
 2. **débruiter avec σ = C**, ``C = √κ_Y + 0.2`` ;
 3. **inverser** la stabilisation.
 
-Sans stabilisation, donner ``σ = C · σ₀`` avec ``σ₀ = √(a + b·L̄)``.
+Sans stabilisation, donner ``σ = C · σ₀`` avec ``σ₀ = √(a·L̄ + b)``.
 
 Le terme ``√κ_Y`` vient de la théorie (luminance) ; le **+0.2** est
 empirique : il compense le bruit de chrominance basse fréquence, que le
@@ -524,8 +526,8 @@ encore blanc) ou sur le capteur (PTC).
   Licence Ouverte v2.0 Etalab), **supposé sans bruit**, linéarisé par
   l'inverse du gamma sRGB. Quatre zones de 512×512 : *tuiles*,
   *végétation*, *pavés*, *verrière*.
-- **Acquisition simulée** : mosaïque RGGB, bruit ``var = a + b·L`` avec
-  ``b = 1/N``, ``a = (2/N)²`` pour N = 100, 400, 1600 électrons à pleine
+- **Acquisition simulée** : mosaïque RGGB, bruit ``σ² = a·L + b`` avec
+  ``a = 1/N``, ``b = (2/N)²`` pour N = 100, 400, 1600 électrons à pleine
   échelle et 2 e⁻ de bruit de lecture (bruit fort, moyen, faible ;
   σ₀ = 0.056, 0.027, 0.013 de la dynamique).
 - **Scores** dans l'espace d'affichage (sRGB) : **CPSNR** (dB) et
@@ -562,7 +564,7 @@ démosaïçage). CPSNR (dB) / ΔE2000 :
 « Médian chroma » : médian 3×3 sur R−G et B−G, G inchangé (Freeman
 1988). « PnP conjoint » : éclatement semi-quadratique sur
 ``y = M·x + bruit`` (``M`` : échantillonnage RGGB), attache aux données
-pondérée par ``1 / (a + b·y)``, débruiteur couleur comme a priori, niveau
+pondérée par ``1 / (a·y + b)``, débruiteur couleur comme a priori, niveau
 décroissant (λ = 0.1, de 1.7σ₀ à 0.5σ₀, 8 itérations pour NLB ;
 λ = 0.23, de 3.4σ₀ à 0.7σ₀, 12 itérations pour DRUNet), à la manière de
 FlexISP (Heide et al. 2014).
@@ -577,7 +579,7 @@ Autre zone : `docs/figures/joint_denoising/vignettes_paves_100e.png`.*
 
 ### 11.7 Comparaison des démosaïqueurs : qualité et temps de calcul
 
-`demosaicing_noise_benchmark.py`. Bruit ``var = a + b·L``, GAT avec
+`demosaicing_noise_benchmark.py`. Bruit ``σ² = a·L + b``, GAT avec
 ``(a, b)`` après le démosaïçage, NL-Bayes avec σ = C, **C optimal** de
 chaque cas (la règle du §11.4 en est à 0.1 dB près). Temps : démosaïçage
 seul d'une image 2048×2048 (4 Mpx), CPU Apple Silicon, meilleur de deux
@@ -729,21 +731,22 @@ tracés : notebook `examples/demosaicing_noise.ipynb` (Plotly).
 0. **Unités.** Tout se fait en luminance linéaire normalisée, avant
    balance des blancs et gamma : ``L = (DN − offset) / S``,
    ``S = DN_max − offset``. Un modèle de bruit donné en DN,
-   ``var(DN) = a_DN + b_DN · (DN − offset)``, se convertit en
-   ``a = a_DN / S²`` et ``b = b_DN / S``. ``(a, b)`` doivent avoir été
+   ``σ²(DN) = a_DN · (DN − offset) + b_DN`` (``a_DN = 1/K`` et ``b_DN``
+   de la PTC d'eoqual-measure), se convertit en ``a = a_DN / S`` et
+   ``b = b_DN / S²``. ``(a, b)`` doivent avoir été
    estimés **sur la mosaïque brute** (ou par la PTC) — sur une image
    démosaïquée, ils seraient faussés d'un facteur κ — et valoir pour les
    quatre sous-plans (avant balance des blancs).
 1. **Démosaïquer** (`ha`, `gbtf`) avec le motif du capteur.
-2. **Stabiliser** : ``generalized_anscombe(rgb, gain=1/b, read_noise_dn=√a)``.
+2. **Stabiliser** : ``generalized_anscombe(rgb, gain=1/a, read_noise_dn=√b)``.
 3. **Débruiter** : `nl_bayes_denoise(g, sigma=C, data_range=(g.min(), g.max()))`,
    mode couleur `"yuv"` (défaut).
-4. **Inverser** : ``inverse_generalized_anscombe(d, 1/b, √a)``.
+4. **Inverser** : ``inverse_generalized_anscombe(d, 1/a, √b)``.
 5. Balance des blancs, matrice couleur, gamma : ensuite seulement.
 
 ```bash
 python examples/real_data_protocol.py --raw mosaique.npy --offset 64 --dn-max 4095 \
-    --a 406.2 --b 10.08 --pattern RGGB --crop 1000 1000 1024 --out protocole/
+    --a 10.08 --b 406.2 --pattern RGGB --crop 1000 1000 1024 --out protocole/
 python examples/real_data_protocol.py --simulate capitole_2048_cog.tif --out protocole/   # sans données
 ```
 
