@@ -2,6 +2,11 @@
 
 ## Version History
 
+0.2.2 (2026-11-18)
+
+:   -   **Notation du modèle de bruit : σ² = a + b·L** (`a` plancher, `b` pente ; bruit stationnaire a = σ², b = 0), commune à tous les modules EOQual, eoqual-measure 0.4.0 compris (dont la PTC suit désormais les mêmes lettres). Lettres inversées par rapport à 0.2.1.
+        Chapitre 11, `README.md`, exemples et notebook. ⚠️ **`examples/real_data_protocol.py`** : `--a` est de nouveau le plancher (DN²) et `--b` la pente (DN) ; `noise_model_to_normalized(a_dn, b_dn, …)` suit la même convention (a = a_DN/S², b = b_DN/S).
+
 0.2.1 (2026-11-17)
 
 :   -   **Notation du modèle de bruit alignée sur eoqual-measure** : **σ² = a·L + b**, `a` pente (1/gain), `b` plancher (bruit de lecture²) ; les `a` et `b` de la PTC d'eoqual-measure s'emploient tels quels. Les versions précédentes notaient `var = a + b·L`, lettres inversées.
