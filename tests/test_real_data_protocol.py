@@ -28,11 +28,11 @@ def _mosaic(rgb):
 
 def test_units_roundtrip():
     offset, dn_max = 64.0, 4095.0
-    a, b = R.noise_model_to_normalized(10.0, 400.0, offset, dn_max)     # σ² = a·L + b (PTC)
+    a, b = R.noise_model_to_normalized(400.0, 10.0, offset, dn_max)     # σ² = a + b·L (PTC)
     s = dn_max - offset
     L = 0.3
-    var_dn = 10.0 * (L * s) + 400.0
-    assert a * L + b == pytest.approx(var_dn / s**2)
+    var_dn = 400.0 + 10.0 * (L * s)
+    assert a + b * L == pytest.approx(var_dn / s**2)
     assert R.normalize_mosaic(np.array([offset, dn_max]), offset, dn_max).tolist() == [0.0, 1.0]
     assert R.rule_factor("ha") == pytest.approx(np.sqrt(1.35) + 0.2)
     assert R.rule_factor("gbtf") == pytest.approx(np.sqrt(2.41) + 0.2)
@@ -40,9 +40,9 @@ def test_units_roundtrip():
 
 def test_protocol_reduces_chroma_noise():
     truth = _scene()
-    a, b = 1 / 400, (2 / 400) ** 2                                     # pente, plancher
+    a, b = (2 / 400) ** 2, 1 / 400                                     # plancher, pente
     rng = np.random.default_rng(0)
-    L = rng.poisson(_mosaic(truth) / a) * a + rng.normal(0, np.sqrt(b), truth.shape[:2])
+    L = rng.poisson(_mosaic(truth) / b) * b + rng.normal(0, np.sqrt(a), truth.shape[:2])
     factors = {"ha": (1.0, 1.36), "gbtf": (1.25, 1.75)}
     metrics, results, (flat, texture) = R.run_protocol(L, a, b, "RGGB", factors=factors)
     assert flat and texture
