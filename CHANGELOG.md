@@ -2,6 +2,15 @@
 
 ## Version History
 
+Non publié
+
+:   -   Documentation réorganisée : documents techniques dans
+        `docs/technique/`, publiés avec l'API et les notes de version
+        par Sphinx et MyST (`docs/`). Les documents décrivent l'état
+        présent ; ce qui change d'une version à l'autre est dans ce
+        fichier, et les variantes de méthode écartées sont décrites au
+        présent dans les documents.
+
 0.2.2 (2026-11-18)
 
 :   -   **Notation du modèle de bruit : σ² = a + b·L** (`a` plancher, `b` pente ; bruit stationnaire a = σ², b = 0), commune à tous les modules EOQual, eoqual-measure 0.4.0 compris (dont la PTC suit désormais les mêmes lettres). Lettres inversées par rapport à 0.2.1.

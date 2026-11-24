@@ -6,7 +6,7 @@
 
 Collection de méthodes de démosaïçage d'images issues d'un capteur à
 matrice de filtres colorés (motif de Bayer) — voir
-**[REFERENCE_TECHNIQUE.md](REFERENCE_TECHNIQUE.md)** pour le détail de
+**[référence technique](docs/technique/reference.md)** pour le détail de
 chaque méthode (principe, implémentation, limites) et
 **[THIRD_PARTY_LICENSES.md](THIRD_PARTY_LICENSES.md)** pour l'audit
 complet des licences du code adapté.
@@ -95,7 +95,7 @@ entrée et renvoient une image RGB `(H, W, 3)`. Les méthodes marquées
 | `lslcd` | RGGB/BGGR/GRBG/GBRG | Dubois — démultiplexage luma-chroma (fréquentiel) |
 
 Détail de chaque méthode (principe, implémentation, limites) :
-**[REFERENCE_TECHNIQUE.md](REFERENCE_TECHNIQUE.md)**.
+**[référence technique](docs/technique/reference.md)**.
 
 **Image bruitée : démosaïçage puis débruitage.** Le chapitre 11 de la
 référence technique pose le modèle de bruit du capteur

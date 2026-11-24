@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Mode opératoire « démosaïçage puis débruitage » sur données réelles
-(REFERENCE_TECHNIQUE.md §11.11).
+(docs/technique/reference.md §11.11).
 
 Pour une mosaïque brute et un modèle de bruit du capteur
 ``σ² = a + b·L`` (a plancher, b pente, notation commune à EOQual ; estimé en dehors), compare Hamilton-Adams (``ha``) et
@@ -60,7 +60,7 @@ _YUV /= np.linalg.norm(_YUV, axis=1, keepdims=True)
 
 # --------------------------------------------------------------------------- unités
 def rule_factor(method: str) -> float:
-    """C conseillé : √κ_Y + 0.2 (REFERENCE_TECHNIQUE.md §11.4)."""
+    """C conseillé : √κ_Y + 0.2 (docs/technique/reference.md §11.4)."""
     return float(np.sqrt(KAPPA_Y[method])) + 0.2
 
 

@@ -67,8 +67,8 @@ mise à disposition par Eastman Kodak Company pour un usage sans
 restriction (aucun texte de licence formel — voir
 `tests/images/NOTICE.md`).
 
-`docs/figures/joint_denoising/*.png` (étude du chapitre 11 de
-`REFERENCE_TECHNIQUE.md`) : vignettes extraites de l'**Orthophotoplan
+`docs/technique/figures/joint_denoising/*.png` (étude du chapitre 11 de
+[référence technique](docs/technique/reference.md)) : vignettes extraites de l'**Orthophotoplan
 2024** de Toulouse Métropole, © Toulouse Métropole, **Licence Ouverte
 v2.0 (Etalab)** — réutilisation libre avec mention de la source
 (https://data.toulouse-metropole.fr/explore/dataset/orthophotoplan-2024/).

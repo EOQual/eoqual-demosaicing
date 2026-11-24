@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Étude « démosaïçage et débruitage » (REFERENCE_TECHNIQUE.md, chapitre 11).
+Étude « démosaïçage et débruitage » (docs/technique/reference.md, chapitre 11).
 
 Compare, sur une orthophoto supposée sans bruit, des chaînes
 démosaïçage + débruitage appliquées à une mosaïque RGGB affectée d'un

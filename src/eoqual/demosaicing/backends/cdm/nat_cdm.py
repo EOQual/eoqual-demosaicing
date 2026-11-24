@@ -269,7 +269,7 @@ def cdm_demosaic(image: np.ndarray, pattern: str = "RGGB") -> np.ndarray:
     -----
     Coûteux : recherche de patchs similaires (fenêtre 31x31, patchs 5x5,
     100 candidats retenus) et SVD par pixel manquant. Voir
-    ``REFERENCE_TECHNIQUE.md``.
+    ``docs/technique/reference.md``.
     """
     mosaic = np.asarray(image, dtype=np.float64)
     red_mask, green_mask, blue_mask = get_mosaic_masks_RGB(pattern, mosaic.shape)

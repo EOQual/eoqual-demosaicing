@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Démosaïqueurs face au bruit (REFERENCE_TECHNIQUE.md, §11.6) : temps de
+Démosaïqueurs face au bruit (docs/technique/reference.md, §11.6) : temps de
 calcul, transfert du bruit (κ_Y, κ_U, κ_V), qualité sans bruit, et
 qualité après débruitage NL-Bayes pour un bruit de capteur
 
@@ -88,7 +88,7 @@ def denoise_gat(rgb, a, b, C):
 
 
 def rule_factor(kappa_y):
-    """Facteur C conseillé sur σ après démosaïçage : √κ_Y + 0.2 (REFERENCE_TECHNIQUE.md §11.4)."""
+    """Facteur C conseillé sur σ après démosaïçage : √κ_Y + 0.2 (docs/technique/reference.md §11.4)."""
     return float(np.sqrt(kappa_y)) + 0.2
 
 

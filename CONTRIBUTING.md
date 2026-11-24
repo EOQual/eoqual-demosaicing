@@ -16,7 +16,7 @@ Ouvrez une issue avec :
 
 Ouvrez une issue décrivant la méthode (nom, référence bibliographique,
 ce qu'elle apporte par rapport aux méthodes déjà cataloguées — voir
-`REFERENCE_TECHNIQUE.md` pour l'existant). Pas besoin de savoir
+[référence technique](docs/technique/reference.md) pour l'existant). Pas besoin de savoir
 l'implémenter pour la proposer.
 
 ## Implémenter une méthode
@@ -57,6 +57,14 @@ Toute nouvelle méthode doit être accompagnée :
 ## Documentation
 
 Toute méthode nouvelle ou modifiée doit rester reflétée dans `README.md`
-(catalogue) et `REFERENCE_TECHNIQUE.md` (principe, implémentation,
+(catalogue) et [référence technique](docs/technique/reference.md) (principe, implémentation,
 limites) — les docstrings seules ne suffisent pas, ces deux documents
 sont la carte d'ensemble du projet.
+
+## Documentation technique
+
+Les documents de `docs/technique/` décrivent l'état présent, sans dates ni
+numéros de version : ce qui change d'une version à l'autre va dans
+`CHANGELOG.md`, et une variante de méthode écartée se décrit au présent,
+dans la section « Variantes écartées » (ou « Choix de conception ») du
+document. Construction locale du site : `make html` dans `docs/`.
