@@ -4,7 +4,11 @@
 
 Non publié
 
-:   -   Documentation réorganisée : documents techniques dans
+:   -   Référence technique découpée en documents spécialisés dans
+        `docs/technique/` (méthodes génériques, propres, publiées ;
+        démosaïçage et bruit dans `bruit/`) ; les chapitres gardent leur
+        numéro.
+    -   Documentation réorganisée : documents techniques dans
         `docs/technique/`, publiés avec l'API et les notes de version
         par Sphinx et MyST (`docs/`). Les documents décrivent l'état
         présent ; ce qui change d'une version à l'autre est dans ce

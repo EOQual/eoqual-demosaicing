@@ -5,7 +5,7 @@ Smoke tests — pour chaque méthode, vérifie que l'appel sur une image
 Bayer réelle ne lève pas d'exception et renvoie une image RGB de forme
 cohérente. Ce ne sont PAS des tests de qualité numérique (pas
 d'assertion sur la fidélité colorimétrique) — voir
-docs/technique/reference.md.
+docs/technique/index.md.
 """
 import os
 
